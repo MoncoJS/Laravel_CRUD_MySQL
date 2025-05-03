@@ -9,7 +9,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/employees', [EmployeeController::class, 'index']);
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+Route::resource('departments', DepartmentController::class);
 Route::resource('employees', EmployeeController::class);
-Route::get('/dashboard', [DashboardController::class, 'index']);
-Route::get('/departments', [DashboardController::class, 'index']);

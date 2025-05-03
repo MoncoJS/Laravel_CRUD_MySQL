@@ -7,13 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Department extends Model
 {
-    //
-    use HasFactory;
-
-    protected $fillable = [
-        'depName',
-        'depStatus',
-    ];
+    protected $fillable = ['depName', 'depStatus'];
 
     public function employees()
     {
