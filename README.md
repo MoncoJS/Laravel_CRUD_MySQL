@@ -1,61 +1,246 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Employee Management System (Laravel + MySQL)
 
-## About Laravel
+โปรเจกต์นี้คือระบบจัดการพนักงาน (Employee) และแผนก (Department) ที่พัฒนาโดยใช้ **Laravel Framework** และ **MySQL** ครอบคลุมการเพิ่ม-ลบ-แก้ไข-แสดง (CRUD) พร้อมข้อมูลตัวอย่างและหน้า Dashboard สำหรับแสดงจำนวนพนักงานในแต่ละแผนก
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🏗️ ความสามารถหลัก
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+✅ จัดการข้อมูลพนักงาน (เพิ่ม/แก้ไข/ลบ/แสดง)  
+✅ จัดการข้อมูลแผนก (เพิ่ม/แก้ไข/ลบ/แสดง)  
+✅ Dashboard แสดงจำนวนพนักงานตามแผนก  
+✅ ใช้ Seeder เติมข้อมูลตัวอย่าง  
+✅ รองรับ export โค้ดโปรเจกต์เป็นไฟล์ .zip
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## ⚙️ ขั้นตอนการติดตั้ง
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 1️⃣ ติดตั้ง Laravel
+```
+composer create-project laravel/laravel employee-system
+cd employee-system
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+### 2️⃣ ตั้งค่าไฟล์ .env
+```
+DB_DATABASE=employee_db
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+> **หมายเหตุ:**  
+> - สร้างฐานข้อมูล `employee_db` ใน MySQL ก่อน  
+> - ถ้าใช้ XAMPP ให้เปิด phpMyAdmin เพื่อสร้างฐานข้อมูลนี้
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development/)**
-- **[Active Logic](https://activelogic.com)**
+### 3️⃣ สร้าง Model + Migration
+```
+php artisan make:model Employee -m
+php artisan make:model Department -m
+```
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 4️⃣ แก้ไขไฟล์ Migration
 
-## Code of Conduct
+**ไฟล์ `create_employees_table.php`**
+```php
+Schema::create('employees', function (Blueprint $table) {
+    $table->id();
+    $table->string('empNo');
+    $table->string('empName');
+    $table->unsignedBigInteger('empDepID');
+    $table->integer('empSalary');
+    $table->unsignedBigInteger('empManager')->nullable();
+    $table->integer('empStatus')->default(1);
+    $table->timestamps();
+});
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+**ไฟล์ `create_departments_table.php`**
+```php
+Schema::create('departments', function (Blueprint $table) {
+    $table->id();
+    $table->string('depName');
+    $table->integer('depStatus')->default(1);
+    $table->timestamps();
+});
+```
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 5️⃣ รัน migration
+```
+php artisan migrate
+```
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 6️⃣ สร้าง Seeder + เติมข้อมูลตัวอย่าง
+
+สร้าง seeder:
+```
+php artisan make:seeder DepartmentSeeder
+php artisan make:seeder EmployeeSeeder
+```
+
+**ไฟล์ `DepartmentSeeder.php`**
+```php
+use App\Models\Department;
+
+Department::insert([
+    ['depName' => 'Marketing', 'depStatus' => 1],
+    ['depName' => 'Accounting', 'depStatus' => 1],
+    ['depName' => 'IT', 'depStatus' => 1],
+]);
+```
+
+**ไฟล์ `EmployeeSeeder.php`**
+```php
+use App\Models\Employee;
+
+Employee::insert([
+    ['empNo' => 'EMP0001', 'empName' => 'Suree', 'empDepID' => 2, 'empSalary' => 15000, 'empManager' => null, 'empStatus' => 1],
+    ['empNo' => 'EMP0002', 'empName' => 'Jirasak', 'empDepID' => 1, 'empSalary' => 12000, 'empManager' => 1, 'empStatus' => 1],
+    ['empNo' => 'EMP0003', 'empName' => 'Nattaporn', 'empDepID' => 1, 'empSalary' => 12000, 'empManager' => 1, 'empStatus' => 1],
+    ['empNo' => 'EMP0004', 'empName' => 'Sarawut', 'empDepID' => 3, 'empSalary' => 18000, 'empManager' => null, 'empStatus' => 1],
+    ['empNo' => 'EMP0005', 'empName' => 'Peerakorn', 'empDepID' => 2, 'empSalary' => 15000, 'empManager' => 1, 'empStatus' => 1],
+    ['empNo' => 'EMP0006', 'empName' => 'Naruechai', 'empDepID' => 3, 'empSalary' => 17000, 'empManager' => 4, 'empStatus' => 1],
+]);
+```
+
+**ไฟล์ `DatabaseSeeder.php`**
+```php
+$this->call([
+    DepartmentSeeder::class,
+    EmployeeSeeder::class,
+]);
+```
+
+รัน:
+```
+php artisan db:seed
+```
+
+---
+
+### 7️⃣ สร้าง Controller
+```
+php artisan make:controller EmployeeController --resource
+php artisan make:controller DepartmentController --resource
+php artisan make:controller DashboardController
+```
+
+---
+
+### 8️⃣ กำหนด Route
+
+ใน `routes/web.php`
+```php
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\DashboardController;
+
+Route::resource('employees', EmployeeController::class);
+Route::resource('departments', DepartmentController::class);
+Route::get('/dashboard', [DashboardController::class, 'index']);
+```
+
+---
+
+### 9️⃣ เขียน Controller
+
+**EmployeeController.php** (ส่วนสำคัญ)
+```php
+public function edit(Employee $employee)
+{
+    $departments = Department::where('depStatus', 1)->get();
+    return view('employees.edit', compact('employee', 'departments'));
+}
+
+public function update(Request $request, Employee $employee)
+{
+    $request->validate([...]);
+    $employee->update($request->all());
+    return redirect()->route('employees.index')->with('success', 'อัปเดตพนักงานเรียบร้อยแล้ว');
+}
+
+public function destroy(Employee $employee)
+{
+    $employee->delete();
+    return redirect()->route('employees.index')->with('success', 'ลบพนักงานเรียบร้อยแล้ว');
+}
+```
+
+---
+
+### 🔨 10️⃣ สร้าง View
+
+โฟลเดอร์:
+```
+resources/views/employees
+resources/views/departments
+resources/views/dashboard
+```
+
+ตัวอย่าง `employees/index.blade.php`:
+```blade
+<h1>รายชื่อพนักงาน</h1>
+<a href="{{ route('employees.create') }}">เพิ่มพนักงาน</a>
+<table>
+    @foreach ($employees as $emp)
+    <tr>
+        <td>{{ $emp->empNo }}</td>
+        <td>{{ $emp->empName }}</td>
+        <td>{{ $emp->empDepID }}</td>
+        <td>{{ $emp->empSalary }}</td>
+        <td>
+            <a href="{{ route('employees.edit', $emp->id) }}">แก้ไข</a>
+            <form action="{{ route('employees.destroy', $emp->id) }}" method="POST">
+                @csrf @method('DELETE')
+                <button type="submit">ลบ</button>
+            </form>
+        </td>
+    </tr>
+    @endforeach
+</table>
+```
+
+---
+
+### 1️⃣1️⃣ รันโปรเจกต์
+```
+php artisan serve
+```
+
+เปิด:
+```
+http://localhost:8000/employees
+http://localhost:8000/departments
+http://localhost:8000/dashboard
+```
+
+---
+
+### 📦 Export โปรเจกต์เป็น .zip
+```
+cd ..
+zip -r employee-system.zip employee-system/
+```
+
+---
+
+## 📌 สรุป
+
+ระบบนี้ช่วยให้คุณ:
+✅ จัดการข้อมูลพนักงานแบบเต็มรูปแบบ  
+✅ ผูกข้อมูลแผนกกับพนักงาน  
+✅ ดูสรุป Dashboard ได้  
+✅ พร้อม seed ข้อมูลตัวอย่าง
+
+หากต้องการไฟล์สำเร็จรูปหรือชุดโค้ดทั้งหมด ส่งคำขอมาได้เลยครับ! 🚀
