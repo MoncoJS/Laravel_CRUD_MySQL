@@ -215,6 +215,8 @@ resources/views/dashboard
 
 ### 1️⃣1️⃣ รันโปรเจกต์
 ```
+composer install
+
 php artisan serve
 ```
 
